@@ -7,13 +7,52 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <!-- Confetti particles land here -->
+  <div id="confetti-container"></div>
+
+  <!-- Achievement / level-up toast -->
+  <div id="achievement-toast" class="achievement-toast" aria-live="polite">
+    <div id="achievement-toast-icon" class="achievement-toast-icon"></div>
+    <div class="achievement-toast-body">
+      <div class="achievement-toast-label">Achievement Unlocked!</div>
+      <div id="achievement-toast-name" class="achievement-toast-name"></div>
+      <div id="achievement-toast-desc" class="achievement-toast-desc"></div>
+    </div>
+  </div>
+
   <div class="container">
+
     <header>
       <h1>Todo List</h1>
       <p class="subtitle">Stay organised, get things done.</p>
     </header>
 
-    <!-- Add todo form -->
+    <!-- ── Game panel ───────────────────────────────────────────── -->
+    <div class="game-panel">
+      <div class="game-top-row">
+        <span class="level-badge" id="level-badge">Lv <span id="player-level">1</span></span>
+        <div class="xp-wrap">
+          <div class="xp-track">
+            <div class="xp-fill" id="xp-fill" style="width:0%"></div>
+          </div>
+          <span class="xp-text" id="xp-text">0 / 100 XP</span>
+        </div>
+      </div>
+      <div class="game-stats-row">
+        <span class="game-badge streak-badge" title="Daily streak">
+          🔥 <span id="streak-count">0</span> streak
+        </span>
+        <span class="game-badge points-badge" title="Total XP earned">
+          ⭐ <span id="total-points">0</span> pts
+        </span>
+        <span class="game-badge tasks-badge" title="Tasks completed">
+          ✅ <span id="total-completed">0</span> done
+        </span>
+      </div>
+    </div>
+
+    <!-- ── Add form ─────────────────────────────────────────────── -->
     <form id="add-form" autocomplete="off">
       <input
         type="text"
@@ -25,26 +64,32 @@
       <button type="submit">Add</button>
     </form>
 
-    <!-- Filter bar -->
+    <!-- ── Filter bar ───────────────────────────────────────────── -->
     <div class="filters">
       <button class="filter-btn active" data-filter="all">All</button>
       <button class="filter-btn" data-filter="active">Active</button>
       <button class="filter-btn" data-filter="completed">Completed</button>
     </div>
 
-    <!-- Stats -->
+    <!-- ── Stats ────────────────────────────────────────────────── -->
     <div class="stats">
       <span id="items-left">0 items left</span>
-      <button id="clear-completed" title="Remove completed todos">Clear completed</button>
+      <button id="clear-completed">Clear completed</button>
     </div>
 
-    <!-- Todo list -->
+    <!-- ── Todo list ─────────────────────────────────────────────── -->
     <ul id="todo-list"></ul>
 
-    <!-- Empty state -->
     <div id="empty-state" class="empty-state hidden">
       <p>No todos here. Add one above!</p>
     </div>
+
+    <!-- ── Achievements ──────────────────────────────────────────── -->
+    <div class="achievements-section">
+      <h3 class="achievements-title">🏆 Achievements</h3>
+      <div id="achievements-grid" class="achievements-grid"></div>
+    </div>
+
   </div>
 
   <script src="app.js"></script>
