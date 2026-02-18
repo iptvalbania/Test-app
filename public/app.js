@@ -1,15 +1,8 @@
 // ── State ────────────────────────────────────────────────────────────────────
 let todos = [];
 let currentFilter = 'all';
-let currentUser   = null;
 
 // ── DOM refs ─────────────────────────────────────────────────────────────────
-const loginScreen  = document.getElementById('login-screen');
-const appEl        = document.getElementById('app');
-const authError    = document.getElementById('auth-error');
-const userPhoto    = document.getElementById('user-photo');
-const userName     = document.getElementById('user-name');
-const logoutBtn    = document.getElementById('logout-btn');
 const addForm      = document.getElementById('add-form');
 const newTodoInput = document.getElementById('new-todo');
 const todoList     = document.getElementById('todo-list');
@@ -20,51 +13,12 @@ const filterBtns   = document.querySelectorAll('.filter-btn');
 
 // ── API helpers ───────────────────────────────────────────────────────────────
 const api = {
-  me:    ()           => fetch('/auth/me').then(r => r.json()),
-  logout:()           => fetch('/auth/logout', { method: 'POST' }).then(r => r.json()),
-
-  getAll:  ()         => fetch('/api/todos').then(r => r.json()),
-  create:  (title)    => fetch('/api/todos', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title }),
-  }).then(r => r.json()),
-  update:  (id, patch) => fetch(`/api/todos/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(patch),
-  }).then(r => r.json()),
-  remove:  (id)       => fetch(`/api/todos/${id}`, { method: 'DELETE' }).then(r => r.json()),
-  clearCompleted: ()  => fetch('/api/todos', { method: 'DELETE' }).then(r => r.json()),
+  getAll:  ()           => fetch('/api/todos').then(r => r.json()),
+  create:  (title)      => fetch('/api/todos', { method: 'POST',   headers: {'Content-Type':'application/json'}, body: JSON.stringify({ title }) }).then(r => r.json()),
+  update:  (id, patch)  => fetch(`/api/todos/${id}`, { method: 'PUT',    headers: {'Content-Type':'application/json'}, body: JSON.stringify(patch) }).then(r => r.json()),
+  remove:  (id)         => fetch(`/api/todos/${id}`, { method: 'DELETE' }).then(r => r.json()),
+  clearCompleted: ()    => fetch('/api/todos', { method: 'DELETE' }).then(r => r.json()),
 };
-
-// ── Auth ──────────────────────────────────────────────────────────────────────
-function showLogin() {
-  loginScreen.classList.remove('hidden');
-  appEl.classList.add('hidden');
-
-  // Show auth error message if redirected back with ?error=
-  if (new URLSearchParams(location.search).get('error') === 'auth_failed') {
-    authError.classList.remove('hidden');
-  }
-}
-
-function showApp(user) {
-  currentUser = user;
-  loginScreen.classList.add('hidden');
-  appEl.classList.remove('hidden');
-
-  userPhoto.src = user.photo || '';
-  userPhoto.style.display = user.photo ? '' : 'none';
-  userName.textContent = user.displayName;
-}
-
-async function handleLogout() {
-  await api.logout();
-  currentUser = null;
-  todos = [];
-  showLogin();
-}
 
 // ── Render ────────────────────────────────────────────────────────────────────
 function getVisible() {
@@ -97,9 +51,9 @@ function render() {
     titleInput.readOnly = true;
 
     titleInput.addEventListener('dblclick', () => startEdit(titleInput));
-    titleInput.addEventListener('blur',     () => finishEdit(titleInput, todo.id));
+    titleInput.addEventListener('blur',  () => finishEdit(titleInput, todo.id));
     titleInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter')  titleInput.blur();
+      if (e.key === 'Enter') titleInput.blur();
       if (e.key === 'Escape') {
         titleInput.value = todo.title;
         titleInput.readOnly = true;
@@ -122,7 +76,12 @@ function render() {
   const activeCount = todos.filter(t => !t.completed).length;
   itemsLeft.textContent = `${activeCount} item${activeCount !== 1 ? 's' : ''} left`;
 
-  emptyState.classList.toggle('hidden', visible.length > 0);
+  // Empty state
+  if (visible.length === 0) {
+    emptyState.classList.remove('hidden');
+  } else {
+    emptyState.classList.add('hidden');
+  }
 }
 
 // ── Inline edit helpers ───────────────────────────────────────────────────────
@@ -140,6 +99,7 @@ async function finishEdit(input, id) {
 
   const newTitle = input.value.trim();
   if (!newTitle) {
+    // Restore original title if blank
     const todo = todos.find(t => t.id === id);
     input.value = todo ? todo.title : '';
     return;
@@ -178,8 +138,6 @@ async function clearCompleted() {
 }
 
 // ── Event listeners ───────────────────────────────────────────────────────────
-logoutBtn.addEventListener('click', handleLogout);
-
 addForm.addEventListener('submit', e => {
   e.preventDefault();
   const title = newTodoInput.value.trim();
@@ -202,12 +160,6 @@ filterBtns.forEach(btn => {
 
 // ── Bootstrap ─────────────────────────────────────────────────────────────────
 (async () => {
-  const user = await api.me();
-  if (!user) {
-    showLogin();
-    return;
-  }
-  showApp(user);
   todos = await api.getAll();
   render();
 })();
