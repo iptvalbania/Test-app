@@ -7,43 +7,74 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Todo List</h1>
-      <p class="subtitle">Stay organised, get things done.</p>
-    </header>
 
-    <!-- Add todo form -->
-    <form id="add-form" autocomplete="off">
-      <input
-        type="text"
-        id="new-todo"
-        placeholder="What needs to be done?"
-        maxlength="200"
-        required
-      />
-      <button type="submit">Add</button>
-    </form>
-
-    <!-- Filter bar -->
-    <div class="filters">
-      <button class="filter-btn active" data-filter="all">All</button>
-      <button class="filter-btn" data-filter="active">Active</button>
-      <button class="filter-btn" data-filter="completed">Completed</button>
+  <!-- ── Login screen (shown when logged out) ───────────────────────────── -->
+  <div id="login-screen" class="login-screen hidden">
+    <div class="login-card">
+      <div class="login-logo">&#10003;</div>
+      <h1>Todo App</h1>
+      <p>Sign in to manage your personal todo list.</p>
+      <a id="google-login-btn" href="/auth/google" class="google-btn">
+        <img
+          src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+          alt="Google logo"
+          width="20" height="20"
+        />
+        Sign in with Google
+      </a>
+      <p id="auth-error" class="auth-error hidden">Authentication failed. Please try again.</p>
     </div>
+  </div>
 
-    <!-- Stats -->
-    <div class="stats">
-      <span id="items-left">0 items left</span>
-      <button id="clear-completed" title="Remove completed todos">Clear completed</button>
-    </div>
+  <!-- ── App (shown when logged in) ────────────────────────────────────── -->
+  <div id="app" class="hidden">
+    <div class="container">
 
-    <!-- Todo list -->
-    <ul id="todo-list"></ul>
+      <!-- Header / user bar -->
+      <header>
+        <div class="header-top">
+          <div class="user-info">
+            <img id="user-photo" src="" alt="" class="avatar" />
+            <span id="user-name"></span>
+          </div>
+          <button id="logout-btn" class="logout-btn">Sign out</button>
+        </div>
+        <h1>My Todos</h1>
+      </header>
 
-    <!-- Empty state -->
-    <div id="empty-state" class="empty-state hidden">
-      <p>No todos here. Add one above!</p>
+      <!-- Add todo form -->
+      <form id="add-form" autocomplete="off">
+        <input
+          type="text"
+          id="new-todo"
+          placeholder="What needs to be done?"
+          maxlength="200"
+          required
+        />
+        <button type="submit">Add</button>
+      </form>
+
+      <!-- Filter bar -->
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="active">Active</button>
+        <button class="filter-btn" data-filter="completed">Completed</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <span id="items-left">0 items left</span>
+        <button id="clear-completed">Clear completed</button>
+      </div>
+
+      <!-- Todo list -->
+      <ul id="todo-list"></ul>
+
+      <!-- Empty state -->
+      <div id="empty-state" class="empty-state hidden">
+        <p>No todos here. Add one above!</p>
+      </div>
+
     </div>
   </div>
 
